@@ -171,7 +171,7 @@ while value.lower()=='n':
             elif heading==OBSTACLE:
                 print(term.clear_eol+term.move_up(1)+'ALIEN HIT THE 💢!')
                 break
-            elif heading==BODY and head!=alien[-1]:
+            elif heading==BODY and head!=alien[-1] and score!=0:
                 print(term.clear_eol+term.move_up(1)+'ALIEN HIT ITSELF 👽!      ')
                 break
 
