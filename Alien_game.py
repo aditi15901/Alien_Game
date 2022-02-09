@@ -3,7 +3,6 @@ import random
 import copy
 from collections import deque
 
-random.seed(1)
 term =Terminal()
 
 UP = term.KEY_UP
