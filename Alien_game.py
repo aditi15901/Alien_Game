@@ -3,13 +3,13 @@ import random
 import copy
 from collections import deque
 
+random.seed(1)
 term =Terminal()
 
 UP = term.KEY_UP
 DOWN = term.KEY_DOWN
 LEFT = term.KEY_LEFT
 RIGHT = term.KEY_RIGHT
-direction =RIGHT
 
 BORDER ='💟'
 BODY = '🌑' 
@@ -29,12 +29,12 @@ def empty_spaces_list(board, space): # returns a list of the empty spaces in the
         list.append([i, j])
   return list
 
-def update(board, remove, hue): 
+def update(board, remove, obs): 
     empty_spaces= empty_spaces_list(board, SPACE)
-    hue=random.choice(empty_spaces)
-    board[hue[0]][hue[1]]=OBSTACLE
+    obs=random.choice(empty_spaces)
+    board[obs[0]][obs[1]]=OBSTACLE
     board[remove[0]][remove[1]]=SPACE
-    return board,hue
+    return board,obs
 
 print(term.home + term.clear)
 print(term.white_on_black(('enter '+term.bold('n ')+term.normal+ 'to start game or '+term.bold('q ')+term.normal+'to quit gameplay')))
@@ -65,7 +65,7 @@ while value.lower()=='n':
         red_obstacles=0                    # stores the count of red obstacles (i.e. without counting the borders)
         obstacle_list=deque([])            # stores the positions of the red obstacles
         obstacle=0                         # stores the count of obstacles including the borders surrounding the current heart
-        value=''
+        direction =RIGHT                   # stores intial direction of alien
 
         board = [[SPACE] * w for _ in range(h)]
         for i in range(h):
@@ -131,31 +131,34 @@ while value.lower()=='n':
                 last_heart=HEARTS[heart_counter+1]
                 heart_counter+=1
                 empty_spaces= empty_spaces_list(board, SPACE)
-                hue=random.choice(empty_spaces)
-                board[hue[0]][hue[1]]=OBSTACLE
+                obs=random.choice(empty_spaces) 
+                last_obstacle=obs
+                board[obs[0]][obs[1]]=OBSTACLE
                 obstacle=0
                 obstacle=1 if heart[0]+1<9 and board[heart[0]+1][heart[1]]!=SPACE else obstacle
                 obstacle=(obstacle+1) if heart[0]-1>=0 and board[heart[0]-1][heart[1]]!=SPACE else obstacle
                 obstacle=(obstacle+1) if heart[1]+1<14 and board[heart[0]][heart[1]+1]!=SPACE else obstacle
                 obstacle=(obstacle+1) if heart[1]-1>=0 and board[heart[0]][heart[1]-1]!=SPACE else obstacle
-                while obstacle>2:
-                    remove=hue
-                    board,hue=update(board,remove,hue)
-                    obstacle-=1
-                while (head[0]+1<9 and board[head[0]+1][head[1]]==OBSTACLE)or (head[0]-1>=0 and board[head[0]-1][head[1]]==OBSTACLE) or (head[1]+1<14 and board[head[0]][head[1]+1]==OBSTACLE) or (head[1]-1>=0 and board[head[0]][head[1]-1]==OBSTACLE):
+
+                while (obstacle>2) or (head[0]+1<9 and board[head[0]+1][head[1]]==OBSTACLE)or (head[0]-1>=0 and board[head[0]-1][head[1]]==OBSTACLE) or (head[1]+1<14 and board[head[0]][head[1]+1]==OBSTACLE) or (head[1]-1>=0 and board[head[0]][head[1]-1]==OBSTACLE):
                     if (head[0]+1<9 and board[head[0]+1][head[1]]==OBSTACLE):
                         remove=(head[0]+1,head[1])
-                        board,hue=update(board,remove,hue)
+                        board,obs=update(board,remove,obs)
                     elif (head[0]-1>=0 and board[head[0]-1][head[1]]==OBSTACLE):
                         remove=(head[0]-1,head[1])
-                        board,hue=update(board,remove,hue)
+                        board,obs=update(board,remove,obs)
                     elif (head[1]+1<14 and board[head[0]][head[1]+1]==OBSTACLE):
                         remove=(head[0],head[1]+1)
-                        board,hue=update(board,remove,hue)
+                        board,obs=update(board,remove,obs)
                     elif (head[1]-1>=0 and board[head[0]][head[1]-1]==OBSTACLE):
                         remove=(head[0],head[1]-1)
-                        board,hue=update(board,remove,hue)
-                obstacle_list.appendleft(hue)
+                        board,obs=update(board,remove,obs)
+                    elif obstacle>2:
+                        remove=last_obstacle
+                        board,obs=update(board,remove,obs)
+                        obstacle-=1
+
+                obstacle_list.appendleft(obs)
                 red_obstacles+=1
                 if red_obstacles>3:
                     remove=obstacle_list.pop()
