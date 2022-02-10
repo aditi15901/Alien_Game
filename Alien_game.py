@@ -205,7 +205,7 @@ while value.lower()=='n':
             print(term.firebrick('Game Over!'))
 
     highscore = max(score,highscore)
-    print(term.white_on_black(('enter '+term.bold('n ')+term.normal+ 'to start game or '+term.bold('q ')+term.normal+'to quit gameplay')))
+    print(term.white_on_black(('enter '+term.bold('n ')+term.normal+ 'to start new game or '+term.bold('q ')+term.normal+'to quit gameplay')))
 
     with term.cbreak(), term.hidden_cursor():
         value = term.inkey()
